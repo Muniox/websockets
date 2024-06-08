@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Chat</h1>
+    <textarea name="" id="" cols="30" rows="10"></textarea>
+    <button>Send</button>
+    <h2>History:</h2>
+    <ul></ul>
+    <script src="http://localhost:3002/socket.io/socket.io.js"></script>
+  <script>
+    const ul = document.querySelector('ul');
+    const textarea = document.querySelector('textarea');
+    const button = document.querySelector('button');
+
+    const addMessageToHistory = (msg) => {
+      const newLi = document.createElement('li');
+      newLi.innerText = msg;
+      ul.prepend(newLi);
+    }
+
+
+    const socket = io('http://localhost:3002/chat');
+    socket.on('message', (event, data) => {
+      switch (event) {
+        case 'new-msg':
+          addMessageToHistory(data);
+          break;
+      }
+    });
+
+    button.addEventListener('click', () => {
+      const msg = textarea.value;
+
+      socket.emit('chat-msg', msg)
+
+      textarea.value = '';
+      textarea.focus();
+    });
+  </script>
+  </body>
+</html>
